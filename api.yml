@@ -1,0 +1,154 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservicio para emparejamiento
+  description: Python + PostgreSQL
+  license:
+    name: Software Architecture 2018-I
+host: 192.168.99.101:8000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /emparejamiento:
+    post:
+      summary: Empareja 2 usuarios
+      operationId: match_post
+      parameters:
+        - name: emparejamiento
+          in: body
+          required: true
+          description: emparejamiento object
+          schema:
+            $ref: '#/definitions/emparejamientoInput'
+
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Retorna todos los registros de emparejamientos (sin importar el estado)
+      operationId: match_get
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/emparejamientosList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /emparejamiento/{id}:
+    get:
+      summary: Retorna todos los emparejamientos aceptados del usuario dado su id
+      operationId: listMatchUser
+      parameters:
+        - name: id
+          in: path
+          description: El id del usuario del cual se quieren obtener los emparejamientos aceptados
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/emparejamientosUserList'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+
+definitions:
+
+  emparejamiento:
+    type: object
+    properties:
+      id:
+        type: integer
+      id_user_one:
+        type: integer
+      id_user_two:
+        type: integer
+      state_user_one:
+        type: integer
+      state_user_two:
+        type: integer
+
+  emparejamientoInput:
+    type: object
+    properties:
+      id_user_one:
+        type: integer
+      id_user_two:
+        type: integer
+      state_user_one:
+        type: integer
+      state_user_two:
+        type: integer
+
+  emparejamientosList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/emparejamiento'
+
+  emparejamientosUserList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/emparejamiento'
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      description:
+        type: object
