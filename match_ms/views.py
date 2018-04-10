@@ -7,6 +7,14 @@ from rest_framework.decorators import detail_route,api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
+from rest_framework import views
+from django.http import JsonResponse
+
+
+from match_ms.calcClass import CalcClass
+
+
+#EMPAREJAMIENTO
 
 @api_view(['GET','POST'])
 def match(request):
@@ -18,24 +26,38 @@ def match(request):
             if created == 1 and created2==0:
                 obj=UsersMatch.objects.get(id_user_one=serializer.data['id_user_one'],id_user_two=serializer.data['id_user_two'])
                 if 'state_user_two' in serializer.data:
-                    obj.state_user_two=serializer.data['state_user_two']
+                    if obj.state_user_two==0:
+                        obj.state_user_two=serializer.data['state_user_two']
                     obj.save()
-                    if serializer.data['state_user_two']==2:
+
+                    if serializer.data['state_user_two']==1:
+                        rejected=UserAccepted.objects.create(id_user=obj.id_user_one, id_user_accepted=obj.id_user_two)
+
+                    elif serializer.data['state_user_two']==2:
                         rejected=UserRejected.objects.create(id_user=obj.id_user_one, id_user_rejected=obj.id_user_two)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             if created == 0 and created2==1:
                 obj=UsersMatch.objects.get(id_user_one=serializer.data['id_user_two'],id_user_two=serializer.data['id_user_one'])
                 if 'state_user_one' in serializer.data:
-                    obj.state_user_two=serializer.data['state_user_one']
+                    if obj.state_user_two==0:
+                        obj.state_user_two=serializer.data['state_user_one']
                     obj.save()
-                    if serializer.data['state_user_one']==2:
+                    if serializer.data['state_user_two']==1:
+                        rejected=UserAccepted.objects.create(id_user=obj.id_user_two, id_user_accepted=obj.id_user_one)
+
+                    elif serializer.data['state_user_one']==2:
                         rejected=UserRejected.objects.create(id_user=obj.id_user_two, id_user_rejected=obj.id_user_one)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             elif created==0 and created2==0:
                 obj=UsersMatch.objects.create(id_user_one=serializer.data['id_user_one'],id_user_two=serializer.data['id_user_two'], state_user_one=serializer.data['state_user_one'])
                 obj.state_user_one=serializer.data['state_user_one']
+                if serializer.data['state_user_one'] == 1:
+                    obj.state_user_one=1
+                    obj.save()
+                    accepted=UserAccepted.objects.create(id_user=obj.id_user_one, id_user_accepted=obj.id_user_two)
+
                 if serializer.data['state_user_one'] == 2:
                     obj.state_user_two=2
                     obj.save()
@@ -59,7 +81,66 @@ def listMatchUser(request,pk):
     serializer= UsersMatchSerializer(queryset,many=True)
     return Response(serializer.data)
 
-# Create your views here.
+
+
+@api_view(['POST'])
+def possibleMatch(request):
+    return Response({'received data': request.data})
+
+
+#USUARIOS ACEPTADOS
+
+@api_view(['GET'])
+def listUsersAccepted(request):
+    queryset=UserAccepted.objects.all()
+    serializer= UserAcceptedSerializer(queryset,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def listUserAcceptedByUser(request,pk):
+    queryset=UserAccepted.objects.filter(id_user=pk)
+    serializer= UserAcceptedSerializer(queryset,many=True)
+    return Response(serializer.data)
+
+
+#USUARIOS RECHAZADOS
+
+@api_view(['GET'])
+def listUsersRejected(request):
+    queryset=UserRejected.objects.all()
+    serializer= UserRejectedSerializer(queryset,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def listUserRejectedByUser(request,pk):
+    queryset=UserRejected.objects.filter(id_user=pk)
+    serializer= UserRejectedSerializer(queryset,many=True)
+    return Response(serializer.data)
+
+class filterUserPleasures(views.APIView):
+    def post(self, request, *args, **kw):
+        # Process any get params that you may need
+        # If you don't need to process get params,
+        # you can skip this part
+        element={}
+        res=[]
+        dic=[]
+        for x in request.data:
+            get_arg1 = x.get('name', None)
+            get_arg2 = x.get('description', None)
+            get_arg3 = x.get('user_id', None)
+            get_arg4 = x.get('subcategory_id', None)
+            # Any URL parameters get passed in **kw
+            myClass = CalcClass(get_arg1, get_arg2, get_arg3, get_arg4, *args, **kw)
+            result = myClass.subcategory()
+            dic.append(result)
+
+        element["subcategorys"]=dic
+        print(element)
+        return Response(element)
+
+
+
 
 class UsersMatchList(ModelViewSet):
     queryset=UsersMatch.objects.all()

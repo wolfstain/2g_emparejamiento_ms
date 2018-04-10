@@ -6,8 +6,8 @@ class UsersMatch(models.Model):
     id_user_one= models.IntegerField()
     id_user_two= models.IntegerField()
     # 0 para espera, 1 para aceptado, 2 para rechazado
-    state_user_one= models.PositiveIntegerField(validators=[MinValueValidator(0),MaxValueValidator(2)])
-    state_user_two= models.PositiveIntegerField(validators=[MinValueValidator(0),MaxValueValidator(2)])
+    state_user_one= models.PositiveIntegerField(default=0,validators=[MinValueValidator(0),MaxValueValidator(2)])
+    state_user_two= models.PositiveIntegerField(default=0,validators=[MinValueValidator(0),MaxValueValidator(2)])
 
 
 class UserAccepted(models.Model):
