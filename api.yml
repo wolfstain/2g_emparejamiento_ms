@@ -84,6 +84,37 @@ paths:
           schema:
             $ref: '#/definitions/ErrorModel'
 
+  /emparejamiento/posibles/{id}:
+    post:
+      summary: Devuelve lista de posibles emparejamientos filtrada
+      operationId: possibleMatch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id del usuario del cual se quiere obtener la lista de posibles emparejamientos
+          type: integer
+        - name: listUsers
+          in: body
+          required: True
+          description: Lista de usuarios por categorias en comun
+          schema:
+            $ref: '#/definitions/PosiblesEmparejamientosUserList'
+
+
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+
 
 definitions:
 
@@ -129,15 +160,19 @@ definitions:
   emparejamientosUserList:
     type: object
     required:
-      - total
       - list
     properties:
-      total:
-        type: number
-      list:
+      userList:
         type: array
         items:
           $ref: '#/definitions/emparejamiento'
+
+
+  PosiblesEmparejamientosUserList:
+    type: array
+    items:
+      type: integer
+    
 
 # Errors
   ErrorModel:
