@@ -169,10 +169,15 @@ definitions:
 
 
   PosiblesEmparejamientosUserList:
-    type: array
-    items:
-      type: integer
-    
+    type: object
+    required:
+      - list
+    properties:
+      userList:
+        type: array
+        items:
+          type: integer
+
 
 # Errors
   ErrorModel:
