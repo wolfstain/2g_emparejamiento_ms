@@ -84,8 +84,25 @@ def listMatchUser(request,pk):
 
 
 @api_view(['POST'])
-def possibleMatch(request):
-    return Response({'received data': request.data})
+def possibleMatch(request,pk):
+    querysetAccepted=UserAccepted.objects.filter(id_user=pk)
+    serializerAccepted= UserAcceptedSerializer(querysetAccepted,many=True)
+
+    querysetRejected=UserRejected.objects.filter(id_user=pk)
+    serializerRejected= UserRejectedSerializer(querysetRejected,many=True)
+
+    listFiltered=list(request.data['listUsers'])
+
+    for accepted in serializerAccepted.data:
+        if accepted['id_user_accepted'] in listFiltered:
+            listFiltered.remove(accepted['id_user_accepted'])
+
+
+    for rejected in serializerRejected.data:
+        if rejected['id_user_rejected'] in listFiltered:
+            listFiltered.remove(rejected['id_user_rejected'])
+
+    return Response({'listUsersFiltered': listFiltered})
 
 
 #USUARIOS ACEPTADOS
@@ -116,29 +133,6 @@ def listUserRejectedByUser(request,pk):
     queryset=UserRejected.objects.filter(id_user=pk)
     serializer= UserRejectedSerializer(queryset,many=True)
     return Response(serializer.data)
-
-class filterUserPleasures(views.APIView):
-    def post(self, request, *args, **kw):
-        # Process any get params that you may need
-        # If you don't need to process get params,
-        # you can skip this part
-        element={}
-        res=[]
-        dic=[]
-        for x in request.data:
-            get_arg1 = x.get('name', None)
-            get_arg2 = x.get('description', None)
-            get_arg3 = x.get('user_id', None)
-            get_arg4 = x.get('subcategory_id', None)
-            # Any URL parameters get passed in **kw
-            myClass = CalcClass(get_arg1, get_arg2, get_arg3, get_arg4, *args, **kw)
-            result = myClass.subcategory()
-            dic.append(result)
-
-        element["subcategorys"]=dic
-        print(element)
-        return Response(element)
-
 
 
 
