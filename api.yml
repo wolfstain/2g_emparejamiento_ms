@@ -173,7 +173,7 @@ definitions:
     required:
       - list
     properties:
-      userList:
+      listUsers:
         type: array
         items:
           type: integer
