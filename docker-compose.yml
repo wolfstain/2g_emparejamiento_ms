@@ -1,14 +1,14 @@
  version: '2'
 
  services:
-   web:
+   match-ms:
      build: .
-     command: python3 manage.py runserver 0.0.0.0:8000
+     command: python3 manage.py runserver 0.0.0.0:4003
      ports:
-       - "8000:8000"
+       - "4003:4003"
      depends_on:
-       - db
-   db:
+       - match-db
+   match-db:
      image: postgres
      ports:
-       - "5432:5432"
+       - "5433:5432"

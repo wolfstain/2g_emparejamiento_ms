@@ -34,7 +34,4 @@ urlpatterns = [
     url(r'^emparejamiento/aceptados$', listUsersAccepted),
     url(r'^emparejamiento/aceptados/usuario/(?P<pk>[0-9]+)$', listUserAcceptedByUser),
     url(r'^emparejamiento/posibles/(?P<pk>[0-9]+)$', possibleMatch),
-    url(r'^emparejamiento/filtrar-gustos', filterUserPleasures.as_view(), name='filter_user_pleasures'),
-
-
 ]

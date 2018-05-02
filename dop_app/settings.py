@@ -26,7 +26,7 @@ SECRET_KEY = 't5-m=zlo2+dv*n19-a(@#__n%l$*&!)q3)i(*&8&h&_6jxvltj'
 DEBUG = True
 
 
-ALLOWED_HOSTS = [u'192.168.99.101', u'127.0.0.1']
+ALLOWED_HOSTS = [u'192.168.99.101', u'127.0.0.1', u'35.227.46.47']
 
 
 # Application definition
@@ -87,7 +87,7 @@ DATABASES = {
         #'HOST': 'localhost',
         #'PASSWORD':'123',
         #'PORT': '',
-        'HOST': 'db',
+        'HOST': 'match-db',
         'PORT': 5432
     }
 }
