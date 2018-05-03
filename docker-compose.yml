@@ -3,7 +3,7 @@
  services:
    match-ms:
      build: .
-     command: python3 manage.py runserver 0.0.0.0:4003
+     command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:4003"
      ports:
        - "4003:4003"
      depends_on:
