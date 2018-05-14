@@ -20,7 +20,6 @@ from rest_framework import routers
 
 
 router = routers.SimpleRouter()
-router.register(r'match', UsersMatchList)
 router.register(r'accepted', UserAcceptedList)
 router.register(r'rejected', UserRejectedList)
 
