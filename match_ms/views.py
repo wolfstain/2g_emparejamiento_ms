@@ -43,11 +43,12 @@ def match(request):
                     if obj.state_user_two==0:
                         obj.state_user_two=serializer.data['state_user_one']
                     obj.save()
-                    if serializer.data['state_user_two']==1:
-                        rejected=UserAccepted.objects.create(id_user=obj.id_user_two, id_user_accepted=obj.id_user_one)
+                    if 'state_user_two'in serializer.data:
+                        if serializer.data['state_user_two']==1:
+                            rejected=UserAccepted.objects.create(id_user=obj.id_user_two, id_user_accepted=obj.id_user_one)
 
-                    elif serializer.data['state_user_one']==2:
-                        rejected=UserRejected.objects.create(id_user=obj.id_user_two, id_user_rejected=obj.id_user_one)
+                        elif serializer.data['state_user_one']==2:
+                            rejected=UserRejected.objects.create(id_user=obj.id_user_two, id_user_rejected=obj.id_user_one)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             elif created==0 and created2==0:
