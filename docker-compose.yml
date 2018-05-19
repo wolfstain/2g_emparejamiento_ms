@@ -1,6 +1,6 @@
- version: '2'
+  version: '2'
 
- services:
+  services:
    match-ms:
      build: .
      command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:4003"
@@ -8,7 +8,16 @@
        - "4003:4003"
      depends_on:
        - match-db
+     networks:
+      - citas-bd
+     links:
+      - match-db
+     restart: on-failure
    match-db:
      image: postgres
      ports:
        - "5433:5432"
+     networks:
+      - citas-bd
+  networks:
+    citas-bd:
